@@ -14,6 +14,7 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.cities.task.dto.DistanceAllResponce;
 import ru.cities.task.dto.DistanceCalculationRequest;
 import ru.cities.task.entity.City;
 import ru.cities.task.entity.Distance;
@@ -45,7 +46,7 @@ public class AllController {
     }
 
     @PostMapping("calculate-distances")
-    public List<Distance> calculateDistances(@RequestBody @Valid DistanceCalculationRequest request) {
+    public List<DistanceAllResponce> calculateDistances(@RequestBody @Valid DistanceCalculationRequest request) {
         return calculatingService.calculateDistances(request);
     }
 

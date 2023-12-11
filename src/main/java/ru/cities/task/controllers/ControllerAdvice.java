@@ -1,5 +1,6 @@
 package ru.cities.task.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -15,7 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
-
+@Slf4j
 @RestControllerAdvice
 public class ControllerAdvice {
     private static final String DEF_MSG = "Системная ошибка";

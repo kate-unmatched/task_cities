@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.GenericGenerator;
 import ru.cities.task.utils.Views;
 
 @Data
@@ -12,8 +13,8 @@ import ru.cities.task.utils.Views;
 public class City {
     @Id
     @JsonView(Views.CityView.class)
-    @Column(updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "increment")
+    @GenericGenerator(name = "increment", strategy = "increment")
     private Long id;
 
     @JsonView(Views.CityView.class)

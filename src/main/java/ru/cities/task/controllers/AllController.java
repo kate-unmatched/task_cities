@@ -5,17 +5,21 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.cities.task.api.Api;
 import ru.cities.task.api.CustomPage;
 import ru.cities.task.api.PositiveResponse;
+import ru.cities.task.api.Response;
 import ru.cities.task.dto.DistanceAllResponse;
 import ru.cities.task.dto.DistanceCalculationRequest;
 import ru.cities.task.entity.City;
@@ -23,17 +27,19 @@ import ru.cities.task.entity.Distance;
 import ru.cities.task.repositories.CityRepository;
 import ru.cities.task.repositories.DistanceRepository;
 import ru.cities.task.services.CalculatingService;
+import ru.cities.task.utils.Errors;
 import ru.cities.task.utils.Views;
 
-import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("task")
+@Tag(name = "Cities API", description = "Cities and calculation of distances API")
 public class AllController {
     private final CityRepository cityRepository;
     private final DistanceRepository distanceRepository;
@@ -54,18 +60,15 @@ public class AllController {
     }
 
     @PostMapping("calculate-distances")
-    public List<DistanceAllResponse> calculateDistances(@RequestBody @Valid DistanceCalculationRequest request) {
-        return calculatingService.calculateDistances(request);
+    public PositiveResponse<List<DistanceAllResponse>> calculateDistances(@RequestBody @Valid DistanceCalculationRequest request) {
+        return Api.positiveResponse(calculatingService.calculateDistances(request));
     }
-
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("upload") // example citiesAndDistances.xml
-    public void citiesUpload(@RequestParam MultipartFile file) throws IOException {
+    public Response citiesUpload(@RequestParam MultipartFile file) throws IOException {
         String ext = StringUtils.substringAfterLast(file.getOriginalFilename(), '.');
-        assert "xml".equals(ext);
-
-//        String str = StreamUtils.copyToString(file.getInputStream(), StandardCharsets.UTF_8);
+        Errors.E101.thr(StringUtils.equals("xml",ext));
 
         JsonNode jsonNode = xmlMapper.readTree(file.getInputStream());
 
@@ -84,5 +87,6 @@ public class AllController {
         // todo add validation for duplicate
         cityRepository.saveAll(cities);
         distanceRepository.saveAll(distances);
+        return Api.emptyPositiveResponse();
     }
 }

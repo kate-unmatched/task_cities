@@ -30,4 +30,13 @@ public class Distance {
     private Long toCityId;
 
     private Double distance;
+
+    public Distance swap(boolean swap) {
+        if (swap) {
+            Long tmp = fromCityId;
+            fromCityId = toCityId;
+            toCityId = tmp;
+        }
+        return this;
+    }
 }

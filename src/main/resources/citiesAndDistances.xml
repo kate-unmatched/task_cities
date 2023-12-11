@@ -1,0 +1,56 @@
+<data>
+    <cities>
+        <row>
+            <latitude>44.6098268</latitude>
+            <longitude>40.1006606</longitude>
+            <name>г Майкоп</name>
+        </row>
+        <row>
+            <latitude>51.9581028</latitude>
+            <longitude>85.9603235</longitude>
+            <name>г Горно-Алтайск</name>
+        </row>
+        <row>
+            <latitude>52.4922513</latitude>
+            <longitude>82.7793606</longitude>
+            <name>Алтайский край, г Алейск</name>
+        </row>
+        <row>
+            <latitude>53.3479968</latitude>
+            <longitude>83.7798064</longitude>
+            <name>г Барнаул</name>
+        </row>
+        <row>
+            <latitude>51.996152</latitude>
+            <longitude>84.9839604</longitude>
+            <name>Алтайский край, г Белокуриха</name>
+        </row>
+        <row>
+            <latitude>52.5393864</latitude>
+            <longitude>85.2138453</longitude>
+            <name>Алтайский край, г Бийск</name>
+        </row>
+        <row>
+            <latitude>50.9979622</latitude>
+            <longitude>81.4643358</longitude>
+            <name>Алтайский край, г Горняк</name>
+        </row>
+        <row>
+            <latitude>53.7063476</latitude>
+            <longitude>84.9315081</longitude>
+            <name>Алтайский край, г Заринск</name>
+        </row>
+        <row>
+            <latitude>51.1581094</latitude>
+            <longitude>82.1872547</longitude>
+            <name>Алтайский край, г Змеиногорск</name>
+        </row>
+    </cities>
+    <distances>
+        <row>
+            <distance>111</distance>
+            <fromCityId>1</fromCityId>
+            <toCityId>2</toCityId>
+        </row>
+    </distances>
+</data>

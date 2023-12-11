@@ -1,6 +1,7 @@
 package ru.cities.task.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.cities.task.dto.DistanceAllResponse;
 import ru.cities.task.dto.DistanceCalculationRequest;
@@ -17,6 +18,7 @@ import java.util.Objects;
 import static ru.cities.task.utils.CalculationType.CROWFLIGHT;
 import static ru.cities.task.utils.CalculationType.DISTANCE_MATRIX;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CalculatingService {
@@ -29,6 +31,7 @@ public class CalculatingService {
     private final DistanceRepository distanceRepository;
 
     public List<DistanceAllResponse> calculateDistances(DistanceCalculationRequest request) {
+        log.info("Start of the calculator service");
         List<City> fromCities = cityRepository.findAllById(request.getFromCities());
         List<City> toCities = cityRepository.findAllById(request.getToCities());
         return switch (request.getCalculationType()) {
@@ -37,19 +40,21 @@ public class CalculatingService {
             case DISTANCE_MATRIX ->
                     Collections.singletonList(new DistanceAllResponse().setDistances(cycleMatr(fromCities, toCities)));
             case ALL -> Arrays.asList(
-                    new DistanceAllResponse().setDistances(cycleMatr(fromCities, toCities)).setCalculationType(CROWFLIGHT),
+                    new DistanceAllResponse().setDistances(cycleCrow(fromCities, toCities)).setCalculationType(CROWFLIGHT),
                     new DistanceAllResponse().setDistances(cycleMatr(fromCities, toCities)).setCalculationType(DISTANCE_MATRIX)
             );
         };
     }
 
     public List<Distance> cycleCrow(List<City> fromCities, List<City> toCities) {
+        log.info("Start cycle of CROWFLIGHT");
         return fromCities.stream().flatMap(from -> toCities
                         .stream().map(to -> crowflight(from, to)))
                 .toList();
     }
 
     public List<Distance> cycleMatr(List<City> fromCities, List<City> toCities) {
+        log.info("Start cycle of DISTANCE_MATRIX");
         return fromCities.stream().flatMap(from -> toCities
                         .stream().map(to -> matrixOfDistances(from, to)))
                 .toList();
@@ -108,14 +113,30 @@ public class CalculatingService {
     }
 
     public Distance matrixOfDistances(City fromCity, City toCity) {
-        Distance existDistance = distanceRepository.findByFromCityIdAndToCityId(fromCity.getId(), toCity.getId());
+        Long fromCityId = fromCity.getId();
+        Long toCityId = toCity.getId();
+        if (Objects.equals(fromCityId, toCityId))
+            return new Distance()
+                    .setFromCityId(fromCityId)
+                    .setToCityId(toCityId)
+                    .setDistance(.0);
+
+        boolean swap;
+        if (swap = toCityId < fromCityId) {
+            Long tmp = fromCityId;
+            fromCityId = toCityId;
+            toCityId = tmp;
+        }
+
+        Distance existDistance = distanceRepository.findByFromCityIdAndToCityId(fromCityId, toCityId);
         if (Objects.nonNull(existDistance))
-            return existDistance;
+            return existDistance.swap(swap);
+
 
         List<Long> allCityIds = cityRepository.findAllId();
         List<Distance> allDistances = distanceRepository.findAll();
-        int indexOfFromCity = allCityIds.indexOf(fromCity.getId());
-        int indexOfToCity = allCityIds.indexOf(toCity.getId());
+        int indexOfFromCity = allCityIds.indexOf(fromCityId);
+        int indexOfToCity = allCityIds.indexOf(toCityId);
 
         int size = allCityIds.size();
         double[][] distanceMatrix = new double[size][size];
@@ -136,6 +157,7 @@ public class CalculatingService {
             int fromIndex = allCityIds.indexOf(distance.getFromCityId());
             int toIndex = allCityIds.indexOf(distance.getToCityId());
             distanceMatrix[fromIndex][toIndex] = distance.getDistance();
+            // distanceMatrix[toIndex][fromIndex] = distance.getDistance();
         }
 
         // Алгоритм Флойда-Уоршелла
@@ -146,9 +168,10 @@ public class CalculatingService {
                         distanceMatrix[i][j] = distanceMatrix[i][k] + distanceMatrix[k][j];
                         if (i == indexOfFromCity && j == indexOfToCity || i == indexOfToCity && j == indexOfFromCity) {
                             return new Distance()
-                                    .setFromCityId(fromCity.getId())
-                                    .setToCityId(toCity.getId())
-                                    .setDistance(distanceMatrix[i][j]);
+                                    .setFromCityId(fromCityId)
+                                    .setToCityId(toCityId)
+                                    .setDistance(distanceMatrix[i][j])
+                                    .swap(swap);
                         }
 
                     }

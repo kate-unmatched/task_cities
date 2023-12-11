@@ -19,6 +19,6 @@ public class City {
     @JsonView(Views.CityView.class)
     private String name;
 
-    double latitude;
-    double longitude;
+    Double latitude;
+    Double longitude;
 }

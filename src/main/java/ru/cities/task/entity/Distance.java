@@ -1,6 +1,7 @@
 package ru.cities.task.entity;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -18,6 +19,7 @@ public class Distance {
 
     @Id
     @GeneratedValue(generator = "increment")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @GenericGenerator(name = "increment", strategy = "increment")
     private Long id;
 

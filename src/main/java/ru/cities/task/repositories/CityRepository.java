@@ -1,10 +1,11 @@
 package ru.cities.task.repositories;
 
+import org.springframework.data.jpa.repository.Query;
 import ru.cities.task.entity.City;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface CityRepository extends AbstractRepository<City> {
-    List<City> findAllByNameIn(Collection<String> cities);
+    @Query("select c.id from City c")
+    List<Long> findAllId();
 }

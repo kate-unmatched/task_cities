@@ -12,7 +12,7 @@ public class DistanceCalculationRequest {
     @NotNull
     private CalculationType calculationType;
     @NotEmpty
-    private Set<String> fromCities;
+    private Set<Long> fromCities;
     @NotEmpty
-    private Set<String> toCities;
+    private Set<Long> toCities;
 }

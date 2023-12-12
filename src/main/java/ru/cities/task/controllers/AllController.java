@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,7 @@ public class AllController {
 
     @GetMapping("cities")
     @JsonView(Views.CityView.class)
+    @Operation(summary = "Получить списки городов (есть пагинация, фильтрация, сортировка)")
     public PositiveResponse<CustomPage<City>> getAll(@SortDefault(sort = "id", direction = Sort.Direction.ASC)
                                                      @PageableDefault(200) Pageable pageable,
                                                      @RequestParam(required = false) Map<String, Object> map) {
@@ -60,12 +62,14 @@ public class AllController {
     }
 
     @PostMapping("calculate-distances")
+    @Operation(summary = "Вычисление дистанции между городами декартовым произведением")
     public PositiveResponse<List<DistanceAllResponse>> calculateDistances(@RequestBody @Valid DistanceCalculationRequest request) {
         return Api.positiveResponse(calculatingService.calculateDistances(request));
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("upload") // example citiesAndDistances.xml
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Выгрузка городов и дистанций из файла")
     public Response citiesUpload(@RequestParam MultipartFile file) throws IOException {
         String ext = StringUtils.substringAfterLast(file.getOriginalFilename(), '.');
         Errors.E101.thr(StringUtils.equals("xml",ext));
@@ -84,7 +88,6 @@ public class AllController {
                         ArrayList.class, Distance.class
                 ));
 
-        // todo add validation for duplicate
         cityRepository.saveAll(cities);
         distanceRepository.saveAll(distances);
         return Api.emptyPositiveResponse();

@@ -157,7 +157,6 @@ public class CalculatingService {
             int fromIndex = allCityIds.indexOf(distance.getFromCityId());
             int toIndex = allCityIds.indexOf(distance.getToCityId());
             distanceMatrix[fromIndex][toIndex] = distance.getDistance();
-            // distanceMatrix[toIndex][fromIndex] = distance.getDistance();
         }
 
         // Алгоритм Флойда-Уоршелла

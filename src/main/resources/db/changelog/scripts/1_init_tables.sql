@@ -4,7 +4,7 @@ create table if not exists city
     id        bigint auto_increment  primary key,
     name      varchar(255) not null,
     latitude  double precision not null,
-    longitude double precision
+    longitude double precision not null
 );
 
 create table if not exists distance

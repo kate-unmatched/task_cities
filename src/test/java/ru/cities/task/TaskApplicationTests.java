@@ -34,7 +34,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-//@WebMvcTest(AllController.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.MOCK,
         classes = TaskApplication.class)
@@ -46,8 +45,6 @@ class TaskApplicationTests {
     private CityRepository cityRepository;
     @Autowired
     private DistanceRepository distanceRepository;
-//    @MockBean
-//    private DistanceRepository dist;
     @InjectMocks
     private AllController allController;
     @Autowired
